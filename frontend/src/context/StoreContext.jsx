@@ -4,13 +4,13 @@ import { food_list as foods } from "../assets/assets/frontend_assets/assets";
 
 export const StoreContext = createContext();
 
-export const StoreContextProvider = ({ children }) => { 
+const StoreContextProvider = ({ children }) => { 
 
 
-    const [cartItems, setCartItems] = useState([]); 
+    const [cartItems, setCartItems] = useState({}); 
      
     const addToCart = (itemId) => {
-        if (cartItems[itemId]) {
+        if (!cartItems[itemId]) {
             setCartItems( (prev) => ({...prev, [itemId]: 1}))
      }  
         else {
@@ -19,7 +19,15 @@ export const StoreContextProvider = ({ children }) => {
     } 
 
     const removeFromCart = (itemId) => {
-        setCartItems( ( prev)=>  ({...prev,[itemId]: prev[itemId]-1}))
+        setCartItems( ( prev)=>  {
+            const newCart = {...prev};
+            if (newCart[itemId] > 1) {
+                newCart[itemId] -= 1;
+            } else {
+                delete newCart[itemId];
+            }
+            return newCart;
+        })
     }
     
     const [food_list, setFoodList] = useState(foods);
@@ -43,3 +51,5 @@ export const StoreContextProvider = ({ children }) => {
         </StoreContext.Provider>
     );
 };
+
+export default StoreContextProvider;
